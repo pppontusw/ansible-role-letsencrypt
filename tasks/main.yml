@@ -1,0 +1,26 @@
+#- name: include OS-specific variables
+#  include_vars: "{{ ansible_distribution }}.yml"
+  
+- include: "{{ ansible_os_family }}.yml"
+  become: yes
+
+- name: make directory
+  file:
+    path: "{{letsencrypt_directory}}"
+    state: directory
+
+- name: download certbot-auto
+  get_url: 
+    url: https://dl.eff.org/certbot-auto
+    dest: ~/
+    mode: 0755
+
+- name: generate cert
+  shell: ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} -d {{letsencrypt_domains}}
+
+- name: setup cronjob
+  cron:
+    name: letsencrypt renew
+    special_time: daily
+    state: present
+    job: ./certbot-auto -n renew && sudo service nginx restart

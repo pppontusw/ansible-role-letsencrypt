@@ -1,0 +1,12 @@
+- name: install prerequisites
+  apt: name={{item}} state=present
+  with_items:
+    - dialog
+    - libexpat1-dev
+    - libffi-dev
+    - libssl-dev
+    - python-dev
+    - python-virtualenv
+    - python2.7-dev
+    - augeas-lenses
+    - libaugeas0

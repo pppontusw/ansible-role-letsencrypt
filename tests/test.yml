@@ -1,0 +1,34 @@
+# unfinished, needs to be publicly accessible to work(?) probably use ec2 to test
+- include: start-docker.yml
+
+- name: start with setting up letsencrypt on http
+  hosts: firsttime-setup-letsencrypt
+  vars:
+    nginx_www_virtual_sites:
+      - site_id: letest.universumglobal.com
+        http_port: 80
+        index: index.html
+        server_names: letest.universumglobal.com
+        letsencrypt: True
+    letsencrypt_directory: /tmp/letsencrypt-auto
+    letsencrypt_email: pontus.wiberg@universumglobal.com
+    letsencrypt_domains: -d letest.universumglobal.com
+  roles:
+    - nginx-www
+    - letsencrypt
+
+- name: now make the site use HTTPS as intended with the letsencrypt certificate
+  hosts: test-letsencrypt
+  vars:
+    nginx_www_ssl_virtual_sites: 
+      - site_id: letest.universumglobal.com
+        http_port: 80
+        https_port: 443
+        index: index.html
+        server_names: letest.universumglobal.com
+        letsencrypt: True
+        ssl_protocols: TLSv1 TLSv1.1 TLSv1.2
+  roles:
+    - nginx-www
+
+- include: stop-docker.yml
