@@ -16,7 +16,7 @@
     mode: 0755
 
 - name: generate cert
-  shell: ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} -d {{letsencrypt_domains}}
+  shell: ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}
 
 - name: setup cronjob
   cron:

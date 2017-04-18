@@ -1,3 +1,3 @@
 letsencrypt_directory: /tmp/letsencrypt-auto
 letsencrypt_email: me@example.com
-letsencrypt_domains: example.com
+letsencrypt_domainstring: -d example.com -d www.example.com
