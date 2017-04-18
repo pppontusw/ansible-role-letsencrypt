@@ -23,4 +23,4 @@
     name: letsencrypt renew
     special_time: daily
     state: present
-    job: ./certbot-auto -n renew && sudo service nginx restart
+    job: ./certbot-auto -n renew && sudo nginx -s reload
