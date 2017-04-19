@@ -21,6 +21,8 @@
 - name: setup cronjob
   cron:
     name: letsencrypt renew
-    special_time: daily
+    minute: '0'
+    hour: '{{renew_hour}}'
+    day: '*'
     state: present
     job: ./certbot-auto -n renew && sudo nginx -s reload
