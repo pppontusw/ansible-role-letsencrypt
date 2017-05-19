@@ -14,9 +14,13 @@
     url: https://dl.eff.org/certbot-auto
     dest: ~/
     mode: 0755
+  become: yes
+  become_user: "{{letsencrypt_user}}"
 
 - name: generate cert
   shell: ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}
+  become: yes
+  become_user: "{{letsencrypt_user}}"
 
 - name: setup cronjob
   cron:
@@ -26,3 +30,5 @@
     day: '*'
     state: present
     job: ./certbot-auto -n renew && sudo nginx -s reload
+  become: yes
+  become_user: "{{letsencrypt_user}}"
