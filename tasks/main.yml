@@ -20,13 +20,16 @@
   become_user: "{{letsencrypt_user}}"
 
 - name: check if we have a 301 on nginx
-  shell: '[[ $(curl -s -o /dev/null -w "%{http_code}" http://localhost) == 301 ]]'
+  shell: 'if [ $(curl -s -o /dev/null -w \"%{http_code}\" http://localhost) != 301 ]; then echo "RELOAD"; fi'
+  args:
+    executable: /bin/bash
   register: nginx_up
   ignore_errors: yes
 
 - name: if not, reload nginx
   shell: nginx -s reload
-  when: nginx_up.rc == 1
+  when: nginx_up.stdout == "RELOAD"
+  become: yes
 
 - name: generate cert
   shell: "{{letsencrypt_directory}}/./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}"
