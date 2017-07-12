@@ -22,6 +22,7 @@
 - name: check if we have a 301 on nginx
   shell: '[[ $(curl -s -o /dev/null -w "%{http_code}" http://localhost) == 301 ]]'
   register: nginx_up
+  ignore_errors: yes
 
 - name: if not, reload nginx
   shell: nginx -s reload
