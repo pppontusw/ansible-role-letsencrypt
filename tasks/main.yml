@@ -8,11 +8,13 @@
   file:
     path: "{{letsencrypt_directory}}"
     state: directory
+    mode: 0777
+  become: yes
 
 - name: download certbot-auto
   get_url: 
     url: https://dl.eff.org/certbot-auto
-    dest: ~/
+    dest: "{{letsencrypt_directory}}"
     mode: 0755
   become: yes
   become_user: "{{letsencrypt_user}}"
@@ -26,7 +28,7 @@
   when: nginx_up.rc == 1
 
 - name: generate cert
-  shell: ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}
+  shell: "{{letsencrypt_directory}}/./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}"
   become: yes
   become_user: "{{letsencrypt_user}}"
 
