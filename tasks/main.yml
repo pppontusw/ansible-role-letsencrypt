@@ -6,18 +6,20 @@
 
 - name: make directory
   file:
-    path: "{{letsencrypt_directory}}"
+    path: "{{item}}"
     state: directory
     mode: 0777
   become: yes
+  with_items:
+    - "{{letsencrypt_directory}}"
+    - "{{certbot_directory}}"
 
 - name: download certbot-auto
   get_url: 
     url: https://dl.eff.org/certbot-auto
-    dest: "{{letsencrypt_directory}}"
+    dest: "{{certbot_directory}}"
     mode: 0755
   become: yes
-  become_user: "{{letsencrypt_user}}"
 
 - name: check if we have a 301 on nginx
   shell: 'if [ $(curl -s -o /dev/null -w \"%{http_code}\" http://localhost) != 301 ]; then echo "RELOAD"; fi'
@@ -32,9 +34,8 @@
   become: yes
 
 - name: generate cert
-  shell: "{{letsencrypt_directory}}/./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}"
+  shell: "cd {{certbot_directory}} && ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}"
   become: yes
-  become_user: "{{letsencrypt_user}}"
 
 - name: setup cronjob
   cron:
@@ -43,6 +44,6 @@
     hour: '{{renew_hour}}'
     day: '*'
     state: present
-    job: ./certbot-auto -n renew && sudo nginx -s reload
+    user: root
+    job: "cd {{certbot_directory}} && ./certbot-auto -n renew && nginx -s reload"
   become: yes
-  become_user: "{{letsencrypt_user}}"

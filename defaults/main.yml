@@ -3,3 +3,4 @@ letsencrypt_email: me@example.com
 letsencrypt_domainstring: -d example.com -d www.example.com
 renew_hour: 4 # the hour of the day that the renew cronjob will run
 letsencrypt_user: root
+certbot_directory: /opt/certbot
