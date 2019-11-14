@@ -1,5 +1,6 @@
 - name: install prerequisites
   apt: name={{item}} state=present
+  become: yes
   with_items:
     - dialog
     - libexpat1-dev
