@@ -34,7 +34,7 @@
   become: yes
 
 - name: generate cert
-  shell: "cd {{certbot_directory}} && ./certbot-auto -n certonly --server https://acme-v01.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}"
+  shell: "cd {{certbot_directory}} && ./certbot-auto -n certonly --server https://acme-v02.api.letsencrypt.org/directory -a webroot --webroot-path={{letsencrypt_directory}} --agree-tos --email {{letsencrypt_email}} {{letsencrypt_domainstring}}"
   become: yes
 
 - name: setup cronjob
